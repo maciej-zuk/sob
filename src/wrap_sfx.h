@@ -6,6 +6,7 @@
 #include "scene.h"
 #include "types.h"
 #include "player.h"
+#include "fs.h"
 #include <cmath>
 
 /// playedSound:setPosition(x, y)
@@ -111,7 +112,8 @@ int wrap_sfx_createSound(lua_State *L) {
         lua_pushstring(L, "createSound(filename)");
         return lua_error(L);
     }
-    Mix_Chunk *mc = Mix_LoadWAV(lua_tostring(L, -1));
+    SDL_RWops *ops=fs_loadAsSDL_RWops(lua_tostring(L, -1));
+    Mix_Chunk *mc = Mix_LoadWAV_RW(ops, 1);
     int mcid = scene_getUniqueMCId();
     scene_getMCContainer()[mcid] = mc;
 

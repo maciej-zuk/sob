@@ -8,6 +8,7 @@
 #include "callbacks.h"
 #include "sfx.h"
 #include "gleswrap.h"
+#include "fs.h"
 
 #ifdef RPI
 #include <bcm_host.h>
@@ -42,6 +43,7 @@ b2Vec2 engine_getScreenCenter(){
 
 void engine_startUp(int argc, char ** argv) {
     DTRACE("engine_startUp");
+    VTRACE(-1, "%s", debug_getVersionInfo());
     if (engine_Active){
         DTRACE("engine_Active!");
         return;
@@ -85,7 +87,9 @@ void engine_startUp(int argc, char ** argv) {
     physics_startUp();
     binding_startUp();
     player_startUp();
+    fs_startUp();
     atexit(engine_cleanUp);
+
     TRACETIME("engine clean");
 
     doCollectProfile=false;
@@ -106,7 +110,7 @@ void engine_startUp(int argc, char ** argv) {
         TRACE("");
         WTRACETIME("RUNNING DEMO");
         TRACE("");
-        binding_loadSceneFromFile("liftExample.lua");
+        binding_loadSceneFromFile("browser.lua");
     }
 }
 
@@ -120,6 +124,7 @@ void engine_cleanUp() {
     binding_cleanUp();
     physics_cleanUp();
     gleswrap_cleanUp();
+    fs_cleanUp();
 
     SDL_DestroyWindow(window);
     SDL_VideoQuit();
@@ -137,6 +142,7 @@ void engine_cleanUp() {
 }
 
 void engine_mainLoop() {
+    if(!engine_Active) return;
     TRACETIME("entering main loop");
     running = true;
     unsigned char *kplist = SDL_GetKeyboardState(NULL);

@@ -1,4 +1,8 @@
 #include "debug.h"
+#include "vinfo.h"
+char *debug_getVersionInfo(){
+    return vinfo;
+}
 
 #ifdef DEBUG
 char levels[][16]={"", "Error: ", "Warning: ", "", "Debug: ", ""};

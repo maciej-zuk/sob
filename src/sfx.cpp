@@ -1,8 +1,8 @@
 #include "sfx.h"
 #include "debug.h"
 #include "callbacks.h"
-#include <SDL/SDL_audio.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL_audio.h>
+#include <SDL2/SDL_mixer.h>
 
 static bool sfxActive = false;
 /*

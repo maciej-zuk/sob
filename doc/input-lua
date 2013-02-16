@@ -1,0 +1,316 @@
+/**
+@mainpage Sob LUA scripting API
+continue to:
+- \subpage globals
+- \subpage physics
+- \subpage entity
+- \subpage player
+- \subpage engine
+*/
+
+//----------------------------------------------------------------
+
+/**
+@page globals Globals
+- \ref onWorldCreate
+- \ref onWorldLoaded
+
+<p><hr></p>
+
+\section onWorldCreate onWorldCreate()
+- callback used while loading the scene
+- example
+@code
+function onWorldCreate()
+   circleBody=physics.createBody(physics.body_type_dynamic, 85, 35)
+   circleShape=physics.createCircleShape(3)
+   circleFixture=physics.createFixtureDef(circleShape,physics.layer_fg))
+   circleBody:addFixture(circleFixture)
+   circleEntity=entity.createEntity(circleBody,"circle")
+   player.setSpawnPoint(10, 10)
+end
+@endcode
+
+<p><hr></p>
+
+\section onWorldLoaded onWorldLoaded()
+- callback used after engine loaded current scene
+- example
+@code 
+function onWorldLoaded()
+   engine.centerOnPlayer()
+end
+@endcode
+*/
+
+//----------------------------------------------------------------
+
+/**
+@page physics Physics
+- \ref createBody
+- \ref body_addFixture
+
+- \ref createCircleShape
+- \ref createPolygonShape
+- \ref createChainShape
+
+- \ref createFixtureDef
+
+- \ref createRevoluteJoint
+- \ref createDistanceJoint
+- \ref joint_destroy
+
+<p><hr></p>
+
+\section createBody createBody(physics.body_type, posx, posy, linearDumping=0.1, angularDumping=0.1)
+- create new body, to be used with entity.createEntity
+@param physics.body_type - can be one of these: \li physics.body_type_dynamic - fully dynamic object \li physics.body_type_kinetic - object whose motion is controlled only by velocities \li physics.body_type_static - static body
+@param posx - x coordinate of body position (number)
+@param posy - y coordinate of body position (number)
+@param linearDumping - defaults to 0.1 (number)
+@param angularDumping - defaults to 0.1 (number)
+\sa \ref entity_setLinearVelocity \ref entity_setAngularVelocity
+- example
+@code 
+body1=physics.createBody(physics.body_type_static, 0, 0)
+entity1=entity.createEntity(body1, "myEntity")
+@endcode
+
+<p><hr></p>
+
+\section body_addFixture body:addFixture(fixturedef)
+- add fixture to body
+@param fixturedef - fixture definition created by \ref createFixtureDef
+
+<p><hr></p>
+
+\section createCircleShape createCircleShape(radius)
+- create circular shape 
+@param radius - radius of circle (number)
+
+<p><hr></p>
+
+\section createChainShape createChainShape(points)
+- create chain shape (set of connected edges)
+@param points - table specified as \htmlonly {x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>, ... , x<sub>n</sub>, y<sub>n</sub>}, where  x<sub>i</sub> and y<sub>i</sub>\endhtmlonly are numbers, if table size is odd, last element will be ignored
+- example
+@code
+chainShape=physics.createChainShape({0, 0,  10, 0,  10, 10,  0, 10,  0, 0}) --create a box
+@endcode
+
+<p><hr></p>
+
+\section createPolygonShape createPolygonShape(points)
+- create polygon shape
+- polygon must be convex, vertices winding order must be counter-clock wise
+- vertex count must be in range [3, 8] (default).
+@param points - table specified as \htmlonly {x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>, ... , x<sub>n</sub>, y<sub>n</sub>}, where  x<sub>i</sub> and y<sub>i</sub>\endhtmlonly are numbers, if table size is odd, last element will be ignored.
+
+<p><hr></p>
+
+\section createFixtureDef createFixtureDef(shape, physics.layer, density=1, friction=1, restitution=0)
+- create fixture with given parameters to use with \ref body_addFixture
+@param shape - shape created with create____Shape functions
+@param physics.layer - collision layer of created fixture, one of:\li physics.layer_bg - background layer \li physics.layer_fg - foreground layer (collides with player)
+@param density - density of fixture (number), optional
+@param friction - friction (number), optional
+@param restitution - restitution (number), optional
+
+<p><hr></p>
+
+\section createRevoluteJoint createRevoluteJoint(entityA, entityB, {anchorX, anchorY}, motor=0, torque=1000, collideConnected=0)
+- create revolute joint connecting two entities' bodies
+@param entityA, entityB - connected entities
+@param anchor - table with position of connecting anchor
+@param motor, torque - motor speed and torque, if not given motor will be disabled (numbers)
+@param collideConnected - connected entities should collide? (0 or 1)
+- example
+@code
+joint=physics.createRevoluteJoint(groundEntity, circleEntity, circleEntity:getPosition(), 10); -- motor enabled
+@endcode
+
+<p><hr></p>
+
+\section createDistanceJoint createDistanceJoint(entityA, entityB, {anchorAX, anchorAY}, {anchorBX, anchorBY}, frq=10, dumping=0.5, collideConnected=0)
+- create joint connecting two entities' bodies, trying to keep constant distance between them
+@param entityA, entityB - connected entities
+@param anchorA, anchorB - table with position of connecting anchor for entityA and entityB
+@param frq - resonaincance frequency of joint
+@param dumping - dumping ratio for joint vibrations
+@param collideConnected - connected entities should collide? (0 or 1)
+
+<p><hr></p>
+
+\section joint_destroy joint:destroy()
+- destroy joint
+- valid for all types of joints
+
+
+*/
+
+//----------------------------------------------------------------
+
+/**
+@page entity Entity
+- \ref entity_getName
+- \ref entity_getPosition
+- \ref entity_setLinearVelocity
+- \ref entity_setAngularVelocity
+- \ref entity_destroy
+- \ref entity_onHit
+- \ref entity_onTouch
+- \ref entity_onLeave
+- \ref entity_onTick
+
+- \ref createEntity
+
+- \ref entity_cbe
+
+<p><hr></p>
+
+\section entity_getName entity:getName()
+- get entity name
+@return string
+
+<p><hr></p>
+
+\section entity_getPosition entity:getPosition()
+- get entity position
+@return {["x"]=x, ["y"]=y} - table with coordinates
+
+<p><hr></p>
+
+\section entity_setLinearVelocity entity:setLinearVelocity(vx, vy)
+- set linear velocity of entity's body
+@param vx, vy - velocity vector (numbers)
+
+<p><hr></p>
+
+\section entity_setAngularVelocity entity:setAngularVelocity(omega)
+- set angular velocity of entity's body
+@param omega - angular velocity (number)
+
+<p><hr></p>
+
+\section entity_destroy entity:destroy()
+- destroy entity
+
+<p><hr></p>
+
+\section entity_onHit entity:onHit(other, velocity)
+- callback used when given entity hits another entity
+@param other - touched entity
+@param velocity - velocity of approach (number)
+
+<p><hr></p>
+
+\section entity_onTouch entity:onTouch()
+- callback used when player touches given entity
+
+<p><hr></p>
+
+\section entity_onLeave entity:onLeave()
+- callback used when player stops touching entity
+
+<p><hr></p>
+
+\section entity_onTick entity:onTick()
+- callback used every second for periodic operations
+
+<p><hr></p>
+
+\section createEntity createEntity(body, name)
+- create new entity
+- body is invalidated in this call and can't be used again
+@param body - body created with \ref createBody
+@param name - name of entity (string)
+
+<p><hr></p>
+
+\section entity_cbe Callback examples
+@code
+
+function onWorldCreate()
+	 (...)
+	 someEntity=entity.createEntity(entityBody,"entity")
+	 function someEntity:onHit(other, vel)
+	 	 print("I hit", other:getName(), "with velocity ",vel)
+	 end
+	 function someEntity:onTick()
+	 	 print("I am still alive")
+	 end
+	 function someEntity:onTouch()
+	 	 print("Wow, player touched me")
+	end
+	(...)
+end
+
+@endcode
+
+*/
+
+//----------------------------------------------------------------
+
+
+/**
+@page player Player
+- \ref player_getPosition
+- \ref setSpawnPoint
+
+<p><hr></p>
+
+\section player_getPosition player.getPosition()
+- get player position
+@return {["x"]=x, ["y"]=y} - table with coordinates
+- example
+@code
+if player.getPosition().y<-20 then
+   print("die!")
+end
+@endcode
+
+<p><hr></p>
+
+\section setSpawnPoint setSpawnPoint(x, y)
+- change player spawning point
+- should be called in onWorldCreate (spawning point will be considered only between onWorldCreate and onWorldLoaded)
+@param x, y - numbers
+\sa \ref onWorldCreate \ref onWorldLoaded
+*/
+
+//----------------------------------------------------------------
+
+/**
+@page engine Engine
+- \ref centerOnPlayer
+- \ref centerOnEntity
+- \ref getTime
+- \ref loadScript
+
+<p><hr></p>
+
+\section centerOnPlayer centerOnPlayer()
+- engine will center view on player each frame
+
+<p><hr></p>
+
+\section centerOnEntity centerOnEntity(entity)
+- engine will center view on given entity each frame
+- must be called on valid entity (eg. calling on destroyed entity will throw an error)
+- destroying entity after calling this function gives unpredictable results, better change centerOn before duing such
+
+<p><hr></p>
+
+\section getTime getTime()
+- get current engine time
+@return number of milliseconds since engine start
+
+<p><hr></p>
+
+\section loadScript loadScript(name)
+- change currently running script
+@param name - name of file with script (string)
+
+*/
+
+//----------------------------------------------------------------

@@ -1,7 +1,7 @@
 #ifndef SFX_H_
 #define SFX_H_
 
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #define MAX_CHANNELS 256
 
 /** start audio

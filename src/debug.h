@@ -8,6 +8,8 @@
 #define VERBOSITY_DEBUG 4
 #define VERBOSITY_EVERYTHING 5
 
+char *debug_getVersionInfo();
+
 #if VLNone
 #define VERBOSITY_LEVEL VERBOSITY_NONE
 #elif VLError

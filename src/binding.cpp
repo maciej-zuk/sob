@@ -5,6 +5,7 @@
 #include "player.h"
 #include "scene.h"
 #include "sfx.h"
+#include "fs.h"
 #include <cstdlib>
 
 static lua_State *L;
@@ -56,8 +57,14 @@ void binding_loadSceneFromFile(const char *name) {
     scene_cleanUp();
     physics_cleanEnvironment();
 
-
-    ret = luaL_loadfile(L, name);
+    const char *data=fs_loadAsString(name);
+    if(data==NULL){
+        ETRACETIME("couldn't find file: %s", name);
+        binding_Active = false;
+        exit(1);
+    }
+    ret = luaL_loadstring(L, data);
+    delete[] data;
     if (ret) {
         ETRACETIME("couldn't load file: %s", lua_tostring(L, -1));
         binding_Active = false;

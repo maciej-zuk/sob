@@ -89,10 +89,6 @@ end
 
 function player.onHit(other, vel)
    playerStep(other, vel)
-   if other==groundEntity and dieOnHitGround then
-      print("you died")
-      engine.loadScript("testScript.lua")
-   end
    if other==krecidelkoEntity then
       print("muczooo circles!")
       krecidelkoJoint:destroy()
