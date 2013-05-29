@@ -15,7 +15,7 @@ rq
 ===
 
 - sdl2
-- lua
+- lua5.1
 - zzip
 - box2d
 - linux/windows/raspberry pi
